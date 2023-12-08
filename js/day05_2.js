@@ -1,11 +1,22 @@
 const fs = require('fs');
-console.log("Advent Of Code - Day 5 (part 1) - Plant A Seed");
+console.log("Advent Of Code - Day 5 (part 2) - Plant More Seeds");
 
-function parseSeeds(line) {
+function parseSeedsRanges(line) {
 
+    let seeds = [];
     let seedIdsSubString = line.split(":")[1];
     let seedIds = seedIdsSubString.split(" ");
-    let seeds = seedIds.filter(e => e !== '').map(e => +e);
+    seedIds = seedIds.filter(e => e !== '').map(e => +e);
+    let i = 0;
+    while (i <= seedIds.length - 2) {
+        let start = seedIds[i];
+        let size = seedIds[i + 1];
+        seeds.push({
+            start,
+            size
+        })
+        i += 2;
+    }
     return seeds;
 }
 
@@ -24,7 +35,7 @@ function parseMap(lines) {
     let innerMap = [];
     for (let i = 1; i < lines.length; i++) {
         let ids = lines[i].split(" ").map(e => +e);
-        innerMap. push({
+        innerMap.push({
             source: ids[1],
             dest: ids[0],
             range: ids[2]
@@ -33,40 +44,49 @@ function parseMap(lines) {
     return { head: head, innerMap: innerMap, sourceToDest: sourceToDestMethod };
 }
 
-function sourceToDestMethod(source){
+function sourceToDestMethod(source) {
 
-    for(let i = 0; i < this.innerMap.length; i++){
+    for (let i = 0; i < this.innerMap.length; i++) {
         let map = this.innerMap[i];
-        if(source >= map.source && source <= map.source + map.range){
+        if (source >= map.source && source < map.source + map.range) {
             return map.dest + (source - map.source)
         }
     }
     return source;
 }
 
-function seedToLocation(seeds, maps){
+function seedToLocation(seeds, maps) {
+                             
+    let theVeryMinLocation = 10000000000000;
+    let seedsCount = 0;
+    for (let i = 0; i < seeds.length; i++) {
+        for (let j = seeds[i].start; j < seeds[i].start + seeds[i].size; j++) {
+            
+            let theSeed = j;
+            seedsCount++;
+            //
+            let startMap = maps['seed'];
+            let sourceId = null;
+            let destId = theSeed;
+            let destName = ''
+            while (destName !== 'location') {
+                
+                sourceId = destId;
 
-    let finalMap = {};
-    for(let i = 0; i < seeds.length; i++){  
-
-        let startMap = maps['seed'];
-        let sourceId = null;
-        let destId = seeds[i];
-        let destName = ''
-        while(destName !== 'location'){
-            sourceId = destId;
-
-            destId = startMap.sourceToDest(sourceId);
-            destName = startMap.head.dest;
-            startMap = maps[destName];
+                destId = startMap.sourceToDest(sourceId);
+                destName = startMap.head.dest;
+                startMap = maps[destName];
+            }
+            theVeryMinLocation = Math.min(destId, theVeryMinLocation);
+            //
         }
-        finalMap[seeds[i]] = destId;
     }
-    return finalMap;
+    console.log("Seeds Count: " + seedsCount);
+    return theVeryMinLocation;
 }
 
 function parseBlocks(lines) {
-    let seeds = parseSeeds(lines[0]);
+    let seeds = parseSeedsRanges(lines[0]);
     let partial = [];
     let maps = {};
     for (let i = 2; i < lines.length; i++) {
@@ -80,18 +100,13 @@ function parseBlocks(lines) {
     }
     let map = parseMap(partial);
     maps[map.head.source] = map;
-    return {seeds, maps};
+    return { seeds, maps };
 }
 
-function findNearestLocationBySeed(lines){
+function findNearestLocationBySeed(lines) {
     let parsed = parseBlocks(lines);
     let result = seedToLocation(parsed.seeds, parsed.maps);
-    console.log(result);
-    let min = 37937915240000;
-    for(p in result){
-        min = Math.min(result[p], min)
-    }
-    return min;
+    return result;
 }
 
 // console.log(parseSeeds("seeds: 79 14 55 13"))
