@@ -1,4 +1,3 @@
-const { count } = require('console');
 const fs = require('fs');
 console.log("Advent Of Code - Day 4 (part 2) - House Of Scratchcards");
 
