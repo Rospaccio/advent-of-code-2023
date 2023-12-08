@@ -1,4 +1,3 @@
-const { match } = require('assert');
 const fs = require('fs');
 console.log("Advent Of Code - Day 3 (part 2) - Do Your Parts");
 
