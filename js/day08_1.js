@@ -1,0 +1,57 @@
+const fs = require('fs');
+console.log("Advent Of Code - Day 8 (part 1) - Turn Left... Wait... Turn Right");
+
+function parseTurns(line) {
+    let turns = line.split("")
+        .map(e => e === 'L' ? 0 : 1)
+    return turns
+}
+
+function parseNodes(lines) {
+
+    let nodes = {}
+    for (let i = 0; i < lines.length; i++) {
+
+        let comps = lines[i].split("=");
+        let id = comps[0].trim();
+
+        let linkedComps = comps[1].replace('(', '').replace(')', '')
+            .split(',')
+        let left = linkedComps[0].trim()
+        let right = linkedComps[1].trim()
+        nodes[id] = {
+            id,
+            arcs: [left, right]
+        };
+    }
+
+    return nodes;
+}
+
+function countsTurnsToEnd(lines) {
+    let turns = parseTurns(lines[0])
+    let nodes = parseNodes(lines.splice("2"));
+
+    let base = turns.length;
+
+    let count = 0;
+    let nodeId = 'AAA';
+    let i = 0;
+    do {
+
+        dest = nodes[nodeId];
+        nodeId = dest.arcs[turns[i]];
+        count++
+        i = (i + 1) % base
+    } while (nodeId !== 'ZZZ')
+
+    return count;
+}
+
+let input = fs.readFileSync("inputs/input_8.1.txt", "utf-8");
+let lines = input.split("\r\n")
+
+// console.log(parseTurns(lines[0]))
+// console.log(parseNodes(lines.splice(2)))
+console.log(countsTurnsToEnd(lines))
+
