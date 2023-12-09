@@ -117,6 +117,6 @@ function findNearestLocationBySeed(lines) {
 // temp = parseMap(["soil-to-fertilizer map:", "0 15 37", "37 52 2", "39 0 15"]);
 // console.log(temp)
 
-let input = fs.readFileSync("inputs/input_5.1.txt", "utf-8");
+let input = fs.readFileSync("inputs/input_basile.txt", "utf-8");
 let lines = input.split("\r\n")
 console.log(findNearestLocationBySeed(lines));
