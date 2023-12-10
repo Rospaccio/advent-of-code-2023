@@ -1,4 +1,5 @@
 const fs = require('fs');
+var lcm = require( 'compute-lcm' );
 console.log("Advent Of Code - Day 8 (part 2) - Ghost Righters and Lefters");
 
 function parseTurns(line) {
@@ -42,40 +43,43 @@ function countsTurnsToEnd(lines) {
     let turns = parseTurns(lines[0])
     let nodes = parseNodes(lines.splice("2"));
 
-    let starters = collectStartNodes(nodes);
+    let starters = originalStarters = collectStartNodes(nodes);
 
     let base = turns.length;
 
     let enders = [];
     let count = 0;
     let index = 0;
-    while (!allEndsWithZ(enders)) {
+    
         // resets after checking
-        enders = [];
+        counts = [];
         for (let i = 0; i < starters.length; i++) {
-            enders.push(step(starters[i], nodes, turns, index, base));
+            counts.push(step(starters[i], nodes, turns, base));
         }
         // for the next iteration
-        index = (index + 1) % base
-        starters = enders;
-        count++;
-    }
+        // index = (index + 1) % base
+        // starters = enders;
+        // count++;
 
-    return count;
+    let leastCommonMultiple = lcm(counts);
+    return leastCommonMultiple;
 }
 
-function step(starter, nodes, turns, index, base) {
+function step(starter, nodes, turns, base) {
     ///
     let count = 0;
     let nodeId = starter;
-    let i = index;
+    let i = 0;
 
-    dest = nodes[nodeId];
-    nodeId = dest.arcs[turns[i]];
-    count++
-    // i = (i + 1) % base
+    do {
 
-    return nodeId;
+        dest = nodes[nodeId];
+        nodeId = dest.arcs[turns[i]];
+        count++
+        i = (i + 1) % base
+    } while (!nodeId.endsWith('Z'))
+
+    return count;
 }
 
 function allEndsWithZ(enders) {
