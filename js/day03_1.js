@@ -7,7 +7,7 @@ const symbols = "[\\\\|!\"£\$%&/\(\)=\\?\^\\*\\+@°#§,:\\-_<>]";
 
 function sumAdjacentNumbersByLine(lineBlock) {
     let sum = 0;
-    // scans the middle line seraching for symbols
+    // scans the middle line searching for symbols
     let regex = new RegExp(symbols, 'gi')
     let matches = lineBlock[1].matchAll(regex);
     let match = matches.next();
